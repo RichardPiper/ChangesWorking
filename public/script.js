@@ -24,13 +24,14 @@ const peers = {}
 
 //fetch user video stream
 
-navigator.mediaDevices.getDisplayMedia({
+navigator.mediaDevices.getUserMedia({
   video: {width:640,height:360},
-  audio: false
+  audio: true
 }).then(stream => {
   myVideoStream = stream;
   addVideoStream(myVideo, stream)
   myPeer.on('call', call => {
+    console.log("on call")
     call.answer(stream)
     const video = document.createElement('video')
     call.on('stream', userVideoStream => {
