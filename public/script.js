@@ -24,7 +24,7 @@ const peers = {}
 
 //fetch user video stream
 
-navigator.mediaDevices.getUserMedia({
+navigator.mediaDevices.getDisplayMedia({
   video: {width:640,height:360},
   audio: true
 }).then(stream => {
