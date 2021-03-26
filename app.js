@@ -21,7 +21,7 @@ require('./config/passport')(passport);
 
 //DB config
 require('dotenv').config(); //for setting environment variables on server
-const uri = process.env.ATLAS_URI;//atlas uri stored in ATLAS_URI defined in .env
+const uri = "mongodb+srv://jose:joseMongoose123@exercisecluster-rmqkg.gcp.mongodb.net/uschool?retryWrites=true&w=majority"//process.env.ATLAS_URI;//atlas uri stored in ATLAS_URI defined in .env
 mongoose.connect(uri,{useNewUrlParser:true ,useUnifiedTopology: true})
     .then(() => console.log("mongodb connected"))
     .catch(err => console.log(err));
