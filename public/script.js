@@ -1,22 +1,19 @@
-const socket = io('https://video-sock-server.herokuapp.com/')
+const socket = io('/')
 console.log(socket);
 const roomIdView = document.getElementById('roomid')
 roomIdView.innerHTML = ROOM_ID
 const videoGrid = document.getElementById('video-grid')
-const shareScreenBtn = document.getElementById('shareScreen')
+//const shareScreenBtn = document.getElementById('shareScreen')
 
 const myPeer = new Peer(undefined, {
   host: '/',
-  path:'peerjs',
+  path:'/peerjs',
   port: '443' // use 443 in cloud deployment
 })
 
-var localStreamConstraints = {
-  audio: true,
-  video: true
-};
-//let myVideoStream;
-let peerConnection;
+
+let myVideoStream;
+
 
 const myVideo = document.createElement('video')
 myVideo.muted = true;
@@ -31,7 +28,6 @@ navigator.mediaDevices.getUserMedia({
   myVideoStream = stream;
   addVideoStream(myVideo, stream)
   myPeer.on('call', call => {
-    console.log("on call")
     call.answer(stream)
     const video = document.createElement('video')
     call.on('stream', userVideoStream => {
@@ -60,9 +56,6 @@ navigator.mediaDevices.getUserMedia({
   })
 })
 
-
-
-/////////////////////////
 socket.on('user-disconnected', userId => {
   if (peers[userId]) peers[userId].close()
 })
@@ -82,7 +75,7 @@ function connectToNewUser(userId, stream) {
   })
 
   peers[userId] = call
-  peerConnection = call
+  
 }
 
 function addVideoStream(video, stream) {
@@ -92,40 +85,6 @@ function addVideoStream(video, stream) {
   })
   videoGrid.append(video)
 }
-
-//function to replace video stream
-function replaceStream(peerConnection, mediaStream) {
-  for(sender of peerConnection.getSenders()){
-      if(sender.track.kind == "audio") {
-          if(mediaStream.getAudioTracks().length > 0){
-              sender.replaceTrack(mediaStream.getAudioTracks()[0]);
-          }
-      }
-      if(sender.track.kind == "video") {
-          if(mediaStream.getVideoTracks().length > 0){
-              sender.replaceTrack(mediaStream.getVideoTracks()[0]);
-          }
-      }
-  }
-}
-
-//Screen Sharing
-
-// shareScreenBtn.addEventListener('click', (event) => {
-//     navigator.mediaDevices.getDisplayMedia({
-//       video:{
-//         height:480,
-//         width:640
-//       }
-//     })
-//     .then( (stream) => {
-//       const video = document.createElement('video');
-//       addVideoStream(video,stream);
-//       //replaceStream(stream);
-//     })
-    
-
-// })
 
 
 const scrollToBottom = () => {
