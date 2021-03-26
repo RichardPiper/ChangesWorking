@@ -1,0 +1,29 @@
+<%- include ('partials/teacher_navbar') %>
+<%- include ('partials/messages') %>
+<div class="row mt-5">
+    <div class="col-md-6 m-auto text-center">
+      <div class="container">
+            <a href="/class/live" class="btn btn-primary btn-large">Start a live class</a>
+      </div>
+      <br>
+      <h2>Discussion Forum</h2>
+      <form action="/class/forum" method="POST">
+        <div class="form-control">
+          <label for="room">Subject</label>
+          <select name="room" id="room">
+            <option value="Computer science">Computer science</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Philosophy">Philosophy</option>
+            <option value="Physics">Physics</option>
+            <option value="English">English</option>
+            <option value="Chemistry">Chemistry</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-secondary">Join Discussion</button>
+      </form>
+    </div>
+  </div>
+
+
+
+
