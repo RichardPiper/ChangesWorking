@@ -24,7 +24,7 @@ const peers = {}
 
 //fetch user video stream
 
-navigator.mediaDevices.getDisplayMedia({
+navigator.mediaDevices.getUserMedia({
   video: {width:640,height:360},
   audio: true
 }).then(stream => {
@@ -111,21 +111,21 @@ function replaceStream(peerConnection, mediaStream) {
 
 //Screen Sharing
 
-shareScreenBtn.addEventListener('click', (event) => {
-    navigator.mediaDevices.getDisplayMedia({
-      video:{
-        height:480,
-        width:640
-      }
-    })
-    .then( (stream) => {
-      const video = document.createElement('video');
-      addVideoStream(video,stream);
-      //replaceStream(stream);
-    })
+// shareScreenBtn.addEventListener('click', (event) => {
+//     navigator.mediaDevices.getDisplayMedia({
+//       video:{
+//         height:480,
+//         width:640
+//       }
+//     })
+//     .then( (stream) => {
+//       const video = document.createElement('video');
+//       addVideoStream(video,stream);
+//       //replaceStream(stream);
+//     })
     
 
-})
+// })
 
 
 const scrollToBottom = () => {
@@ -157,6 +157,130 @@ const playStop = () => {
   }
 }
 
+const shareScreen = async () => {
+
+
+
+
+  const socket = io('/')
+  const videoGrid = document.getElementById('video-grid')
+  const myPeer = new Peer(undefined, {
+    path: '/peerjs',
+    host: '/',
+    port: '443'
+  })
+  
+const myVideo2 = document.createElement('video')
+myVideo2.muted = true;
+const peers = {}
+navigator.mediaDevices.getDisplayMedia({
+  video: true,
+  audio: true
+}).then(stream => {
+  myVideoStream = stream;
+  addVideoStream(myVideo2, stream)
+  myPeer.on('call', call => {
+    call.answer(stream)
+    const video2 = document.createElement('video')
+    call.on('stream', userVideoStream => {
+      addVideoStream(video2, userVideoStream)
+    })
+  })
+
+  socket.on('user-connected', userId => {
+    connectToNewUser(userId, stream)
+  })
+  
+
+})
+
+socket.on('user-disconnected', userId => {
+  if (peers[userId]) peers[userId].close()
+})
+
+myPeer.on('open', id => {
+  socket.emit('join-room', ROOM_ID, id)
+})
+
+function connectToNewUser(userId, stream) {
+  
+  const call = myPeer.call(userId, stream)
+  const video2 = document.createElement('video')
+  call.on('stream', userVideoStream => {
+    
+  })
+  call.on('close', () => {
+    video2.remove()
+  })
+
+  peers[userId] = call
+}
+
+function addVideoStream(video2, stream) {
+  video2.srcObject = stream
+  video2.addEventListener('loadedmetadata', () => {
+    video2.play()
+  })
+  videoGrid.append(video2)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+  let userId=1233
+ 
+ 
+  var displayMediaOptions = {
+    video:{
+        cursor:'always'
+    },
+    audio:false
+}
+
+
+  try {
+    
+    const myVideo2 = document.createElement('video')
+    stream=await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+    myVideo2.srcObject=stream
+
+    myVideo2.addEventListener('loadedmetadata', () => {
+      myVideo2.play()
+     })
+     videoGrid.append(myVideo2)
+
+
+    var x= document.createAttribute("autoplay"); 
+    myVideo2.setAttributeNode(x); 
+    */
+    /*
+    captureStream=await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+    const videoElement =document.getElementById("video")
+    var x= document.createAttribute("autoplay");  
+    videoElement.setAttributeNode(x); 
+    videoElement.srcObject = captureStream 
+    
+
+    //connectToNewUser(userId, captureStream)
+    
+
+  } catch (err) {
+    alert(err)
+  }
+  // 
+  */
+};
 const setMuteButton = () => {
   const html = `
     <i class="fas fa-microphone"></i>
